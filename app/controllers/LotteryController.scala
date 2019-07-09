@@ -53,8 +53,21 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
     *
     * @return A http 200 response with a body containing all tickets as json
     */
-  def allTickets = Action { implicit request: Request[AnyContent] =>
+  def allTickets = Action { _ =>
     Ok(Json.toJson(tickets.values))
+  }
+
+  /** Searches the collection of tickets using the ticket ID as the key
+    * Example: curl -X GET http://localhost:9000/ticket/3d8df83f-3b08-479b-b4ac-2aa542de0b58
+    *
+    * @param id the ticket to search for
+    * @return if a corresponding ticket is found a http 200 response with a body containing the ticket,
+    *         otherwise a http 400 (not found) is returned
+    */
+  def findTicket(id: String) = Action { _ =>
+    tickets.get(id).fold(NotFound("Could not find specified ticket")) { ticket =>
+      Ok(Json.toJson(ticket))
+    }
   }
 
   private def extractLine(body: AnyContent): Option[LineView] = {

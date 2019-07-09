@@ -14,3 +14,6 @@ POST    /ticket                     controllers.LotteryController.createTicket
 
 # Return a list of tickets
 GET     /ticket                     controllers.LotteryController.allTickets
+
+# Get individual ticket
+GET     /ticket/:id                 controllers.LotteryController.findTicket(id)
