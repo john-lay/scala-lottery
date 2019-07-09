@@ -94,6 +94,26 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
     }
   }
 
+  /** Checks the status of a ticket for winning lines and marks it as checked
+    * Example: curl -X GET http://localhost:9000/status/3d8df83f-3b08-479b-b4ac-2aa542de0b58
+    *
+    * @param id the ticket to search for
+    * @return if a corresponding ticket is found a http 200 response with a body containing the modified ticket,
+    *         otherwise a http 400 (not found) is returned
+    */
+  def status(id: String) = Action { _ =>
+    tickets.get(id).fold(NotFound("Could not find specified ticket")) { ticket =>
+      if (ticket.amended) Ok(Json.toJson(ticket))
+      else {
+        val amendedTicket = ticket.copy(amended = true, lines = ticket.lines.sortBy(_.result).reverse)
+        tickets.remove(ticket.id)
+        tickets.put(amendedTicket.id, amendedTicket)
+
+        Ok(Json.toJson(amendedTicket))
+      }
+    }
+  }
+
   private def extractLine(body: AnyContent): Option[LineView] = {
     body.asJson match {
       case None => None
