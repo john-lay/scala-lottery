@@ -1,9 +1,15 @@
 package controllers
 
+import java.util.UUID
+
 import javax.inject._
-import play.api.libs.json.{JsError, JsSuccess}
+import models.{Line, Ticket}
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
 import viewmodels.LineView
+
+import scala.collection.mutable
+import scala.util.Random
 
 /** This controller creates an `Action` to handle HTTP requests to the
   * application's lottery tickets.
@@ -12,6 +18,8 @@ import viewmodels.LineView
 class LotteryController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   private val log = play.api.Logger(getClass).logger
+  private val tickets = mutable.HashMap[String, Ticket]()
+  private val r = Random
 
   /** Create an Action to render an HTML page.
     *
@@ -32,7 +40,11 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
   def createTicket = Action { request: Request[AnyContent] =>
     val body: AnyContent = request.body
     extractLine(body).fold(BadRequest("Expecting application/json request body")) { line =>
-      Ok(line.lines.toString).as("application/json")
+      val lines = List.fill(line.lines)(Line((r.nextInt(3), r.nextInt(3), r.nextInt(3))))
+      val ticket = Ticket(UUID.randomUUID.toString, lines, false)
+      tickets.put(ticket.id, ticket)
+
+      Ok(Json.toJson(ticket))
     }
   }
 
