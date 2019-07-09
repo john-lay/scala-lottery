@@ -37,15 +37,24 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
     *
     * @return A http 200 response with a body containing the new ticket
     */
-  def createTicket = Action { request: Request[AnyContent] =>
+  def createTicket = Action { implicit request: Request[AnyContent] =>
     val body: AnyContent = request.body
     extractLine(body).fold(BadRequest("Expecting application/json request body")) { line =>
       val lines = List.fill(line.lines)(Line((r.nextInt(3), r.nextInt(3), r.nextInt(3))))
-      val ticket = Ticket(UUID.randomUUID.toString, lines, false)
+      val ticket = Ticket(UUID.randomUUID.toString, lines, amended = false)
       tickets.put(ticket.id, ticket)
 
       Ok(Json.toJson(ticket))
     }
+  }
+
+  /** Lists all lottery tickets
+    * Example: curl -X GET http://localhost:9000/ticket
+    *
+    * @return A http 200 response with a body containing all tickets as json
+    */
+  def allTickets = Action { implicit request: Request[AnyContent] =>
+    Ok(Json.toJson(tickets.values))
   }
 
   private def extractLine(body: AnyContent): Option[LineView] = {
