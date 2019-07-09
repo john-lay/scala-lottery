@@ -5,7 +5,7 @@ import play.api.libs.json._
 /** A model representing a line on a lottery ticket
   */
 case class Line(numbers: (Int, Int, Int)) {
-  val result =
+  val result: Int =
     if (numbers._1 + numbers._2 + numbers._3 == 2) Line.RESULT_EQUAL_TWO
     else if (numbers._1 == numbers._2 && numbers._1 == numbers._3) Line.RESULT_ALL_SAME
     else if (numbers._1 != numbers._2 && numbers._1 != numbers._3) Line.RESULT_UNIQUE_FIRST
