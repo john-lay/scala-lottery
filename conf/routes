@@ -17,3 +17,6 @@ GET     /ticket                     controllers.LotteryController.allTickets
 
 # Get individual ticket
 GET     /ticket/:id                 controllers.LotteryController.findTicket(id)
+
+# Amend ticket lines
+PUT     /ticket                     controllers.LotteryController.addLines

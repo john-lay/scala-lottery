@@ -6,7 +6,7 @@ import javax.inject._
 import models.{Line, Ticket}
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc._
-import viewmodels.LineView
+import viewmodels.{LineView, TicketView}
 
 import scala.collection.mutable
 import scala.util.Random
@@ -39,8 +39,8 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
     */
   def createTicket = Action { implicit request: Request[AnyContent] =>
     val body: AnyContent = request.body
-    extractLine(body).fold(BadRequest("Expecting application/json request body")) { line =>
-      val lines = List.fill(line.lines)(Line((r.nextInt(3), r.nextInt(3), r.nextInt(3))))
+    extractLine(body).fold(BadRequest("Expecting application/json request body")) { lineView: LineView =>
+      val lines = List.fill(lineView.lines)(Line((r.nextInt(3), r.nextInt(3), r.nextInt(3))))
       val ticket = Ticket(UUID.randomUUID.toString, lines, amended = false)
       tickets.put(ticket.id, ticket)
 
@@ -70,6 +70,30 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
     }
   }
 
+  /** Adds the specified number of lines to the lottery ticket
+    * Example (adding 3 lines):
+    * curl -H "Content-Type: application/json" -X PUT -d '{ "id": "3d8df83f-3b08-479b-b4ac-2aa542de0b58", "lines": 3 }' http://localhost:9000/ticket
+    *
+    * @return if a corresponding ticket is found a http 200 response with a body containing the modified ticket,
+    *         otherwise a http 400 (not found) is returned
+    */
+  def addLines = Action { implicit request: Request[AnyContent] =>
+    val body: AnyContent = request.body
+    extractTicket(body).fold(BadRequest("Expecting application/json request body")) { ticketView: TicketView =>
+      tickets.get(ticketView.id).fold(NotFound("Could not find specified ticket")) { ticket =>
+        if (ticket.amended) Forbidden("Not allowed to amend ticket")
+        else {
+          val lines = List.fill(ticketView.lines)(Line((r.nextInt(3), r.nextInt(3), r.nextInt(3))))
+          val amendedTicket = Ticket(ticket.id, ticket.lines ++ lines, ticket.amended)
+          tickets.remove(ticket.id)
+          tickets.put(amendedTicket.id, amendedTicket)
+
+          Ok(Json.toJson(amendedTicket))
+        }
+      }
+    }
+  }
+
   private def extractLine(body: AnyContent): Option[LineView] = {
     body.asJson match {
       case None => None
@@ -78,6 +102,19 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
           Some(success.get)
         case error: JsError =>
           log.error("failed to deserialise ({}) as body of create ticket request with exception {}", json: Any, error)
+          None
+      }
+    }
+  }
+
+  private def extractTicket(body: AnyContent): Option[TicketView] = {
+    body.asJson match {
+      case None => None
+      case Some(json) => json.validate[TicketView] match {
+        case success: JsSuccess[TicketView] =>
+          Some(success.get)
+        case error: JsError =>
+          log.error("failed to deserialise ({}) as body of amend ticket request with exception {}", json: Any, error)
           None
       }
     }
