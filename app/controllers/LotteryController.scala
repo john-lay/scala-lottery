@@ -21,16 +21,6 @@ class LotteryController @Inject()(cc: ControllerComponents) extends AbstractCont
   private val tickets = mutable.HashMap[String, Ticket]()
   private val r = Random
 
-  /** Create an Action to render an HTML page.
-    *
-    * The configuration in the `routes` file means that this method
-    * will be called when the application receives a `GET` request with
-    * a path of `/`.
-    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-
   /** Generate a new ticket and add it to the collection of tickets
     * Example (with 3 lines):
     * curl -H "Content-Type: application/json" -X POST -d '{ "lines": 3 }' http://localhost:9000/ticket
