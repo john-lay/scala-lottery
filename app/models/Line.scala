@@ -14,10 +14,10 @@ case class Line(numbers: (Int, Int, Int)) {
 }
 
 object Line {
-  private val RESULT_EQUAL_TWO: Int = 10
-  private val RESULT_ALL_SAME: Int = 5
-  private val RESULT_UNIQUE_FIRST: Int = 1
-  private val RESULT_DEFAULT: Int = 0
+  val RESULT_EQUAL_TWO: Int = 10
+  val RESULT_ALL_SAME: Int = 5
+  val RESULT_UNIQUE_FIRST: Int = 1
+  val RESULT_DEFAULT: Int = 0
 
   implicit val lineWrites: Writes[Line] = (line: Line) => {
     val numbers: Seq[JsNumber] = Seq(JsNumber(line.numbers._1), JsNumber(line.numbers._2), JsNumber(line.numbers._3))
