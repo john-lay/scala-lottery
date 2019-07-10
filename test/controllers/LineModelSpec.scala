@@ -37,10 +37,22 @@ class LineModelSpec extends WordSpec {
       }
     }
 
-    "all numbers are zero" should {
-      "have a result all same" in {
+    "all numbers are the same" should {
+      "have a result all same for 0, 0, 0" in {
         val fixture = Line(numbers = (0, 0, 0))
         assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+      }
+      "have a result all same for 1, 1, 1" in {
+        val fixture = Line(numbers = (1, 1, 1))
+        assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+      }
+      "have a result all same for 2, 2, 2" in {
+        val fixture = Line(numbers = (2, 2, 2))
+        assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+      }
+      "have a result invalid for 3, 3, 3" in {
+        val fixture = Line(numbers = (3, 3, 3))
+        assertResult(Line.RESULT_INVALID)(fixture.result)
       }
     }
 
