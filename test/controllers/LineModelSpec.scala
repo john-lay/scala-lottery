@@ -82,5 +82,28 @@ class LineModelSpec extends WordSpec {
         assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
       }
     }
+
+    "first number is unique and equal to one" should {
+      "have a result first unique for 1, 0, 0" in {
+        val fixture = Line(numbers = (1, 0, 0))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+      "have a result first unique for 1, 2, 2" in {
+        val fixture = Line(numbers = (1, 2, 2))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+      "have a result invalid for 1, 3, 3" in {
+        val fixture = Line(numbers = (1, 3, 3))
+        assertResult(Line.RESULT_INVALID)(fixture.result)
+      }
+      "have a result first unique for 1, 0, 2" in {
+        val fixture = Line(numbers = (1, 0, 2))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+      "have a result first unique for 1, 2, 0" in {
+        val fixture = Line(numbers = (1, 2, 0))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+    }
   }
 }
