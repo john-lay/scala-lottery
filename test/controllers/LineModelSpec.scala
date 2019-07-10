@@ -31,6 +31,10 @@ class LineModelSpec extends WordSpec {
         val fixture = Line(numbers = (0, 0, 2))
         assertResult(Line.RESULT_EQUAL_TWO)(fixture.result)
       }
+      "have a result equal to invalid for -1, 0, 3" in {
+        val fixture = Line(numbers = (-1, 0, 3))
+        assertResult(Line.RESULT_INVALID)(fixture.result)
+      }
     }
 
     "all numbers are zero" should {
@@ -51,6 +55,20 @@ class LineModelSpec extends WordSpec {
       "have a result all same" in {
         val fixture = Line(numbers = (2, 2, 2))
         assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+      }
+    }
+
+    "all numbers are unique" should {
+      "have a result unique first" in {
+        val fixture = Line(numbers = (0, 1, 2))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+    }
+
+    "first number is unique, but the line total equals two" should {
+      "have a result equal two" in {
+        val fixture = Line(numbers = (0, 1, 1))
+        assertResult(Line.RESULT_EQUAL_TWO)(fixture.result)
       }
     }
   }
