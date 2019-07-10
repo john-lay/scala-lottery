@@ -13,33 +13,33 @@ import play.api.test.Helpers._
  */
 class LotteryControllerSpec extends PlaySpec with GuiceOneAppPerTest with Injecting {
 
-  "HomeController GET" should {
+  "LotteryController GET all tickets" should {
 
-    "render the index page from a new instance of controller" in {
+    "return an empty array from a new instance of controller" in {
       val controller = new LotteryController(stubControllerComponents())
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val allTickets = controller.allTickets().apply(FakeRequest(GET, "/ticket"))
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include ("Welcome to Play")
+      status(allTickets) mustBe OK
+      contentType(allTickets) mustBe Some("application/json")
+      contentAsString(allTickets) must include ("[]")
     }
 
-    "render the index page from the application" in {
+    "return an empty array from the application" in {
       val controller = inject[LotteryController]
-      val home = controller.index().apply(FakeRequest(GET, "/"))
+      val allTickets = controller.allTickets().apply(FakeRequest(GET, "/ticket"))
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include ("Welcome to Play")
+      status(allTickets) mustBe OK
+      contentType(allTickets) mustBe Some("application/json")
+      contentAsString(allTickets) must include ("[]")
     }
 
-    "render the index page from the router" in {
-      val request = FakeRequest(GET, "/")
-      val home = route(app, request).get
+    "return an empty array from the router" in {
+      val request = FakeRequest(GET, "/ticket")
+      val allTickets = route(app, request).get
 
-      status(home) mustBe OK
-      contentType(home) mustBe Some("text/html")
-      contentAsString(home) must include ("Welcome to Play")
+      status(allTickets) mustBe OK
+      contentType(allTickets) mustBe Some("application/json")
+      contentAsString(allTickets) must include ("[]")
     }
   }
 }
