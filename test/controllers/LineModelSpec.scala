@@ -56,31 +56,30 @@ class LineModelSpec extends WordSpec {
       }
     }
 
-    "all numbers are one" should {
-      "have a result all same" in {
-        val fixture = Line(numbers = (1, 1, 1))
-        assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+    "first number is unique and equal to zero" should {
+      "NOT have a result unique for 0, 1, 1" in {
+        val fixture = Line(numbers = (0, 1, 1))
+        assertResult(Line.RESULT_UNIQUE_FIRST == fixture.result)(false)
       }
-    }
-
-    "all numbers are two" should {
-      "have a result all same" in {
-        val fixture = Line(numbers = (2, 2, 2))
-        assertResult(Line.RESULT_ALL_SAME)(fixture.result)
+      "have a result equal two for 0, 1, 1" in {
+        val fixture = Line(numbers = (0, 1, 1))
+        assertResult(Line.RESULT_EQUAL_TWO)(fixture.result)
       }
-    }
-
-    "all numbers are unique" should {
-      "have a result unique first" in {
+      "have a result first unique for 0, 2, 2" in {
+        val fixture = Line(numbers = (0, 2, 2))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
+      }
+      "have a result invalid for 0, 3, 3" in {
+        val fixture = Line(numbers = (0, 3, 3))
+        assertResult(Line.RESULT_INVALID)(fixture.result)
+      }
+      "have a result first unique for 0, 1, 2" in {
         val fixture = Line(numbers = (0, 1, 2))
         assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
       }
-    }
-
-    "first number is unique, but the line total equals two" should {
-      "have a result equal two" in {
-        val fixture = Line(numbers = (0, 1, 1))
-        assertResult(Line.RESULT_EQUAL_TWO)(fixture.result)
+      "have a result first unique for 0, 2, 1" in {
+        val fixture = Line(numbers = (0, 2, 1))
+        assertResult(Line.RESULT_UNIQUE_FIRST)(fixture.result)
       }
     }
   }
